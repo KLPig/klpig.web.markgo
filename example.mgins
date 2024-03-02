@@ -1,0 +1,10 @@
+!HEAD.set.title:"Test doc"
+!HEAD.import.js:"./script.js"
+!HEAD.import.css:"./style.css"
+#CREATE.a
+?a = "5"
+#CREATE.p
+?p = "<p id=666></p>"
+!BODY.add.child:?p
+?pp = "<button id=114></button>"
+!BODY.add.child:?pp
