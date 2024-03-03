@@ -4,7 +4,10 @@
 #CREATE.a
 ?a = "5"
 #CREATE.p
-?p = "<p id=666></p>"
+?p = "<p></p>"
+?p < Hello, world!
+#CREATE.b
+?b = "<b></b>"
+?b < Bold Text.
+?p < ?b
 !BODY.add.child:?p
-?pp = "<button id=114></button>"
-!BODY.add.child:?pp

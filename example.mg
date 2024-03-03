@@ -21,10 +21,17 @@ required to explain this language'
 #CREATE.p;
 
 'Setting variable p to a <p> element'
-?p = <NEW-ELEMENT p 666>;
+?p = <NEW-ELEMENT p>;
+
+'Use < operator to insert the texts'
+?p < Hello, world!;
+
+#CREATE.b;
+
+?b = <NEW-ELEMENT b>;
+
+?b < Bold Text.;
+
+?p < ?b;
+
 !BODY.add.child:?p;
-
-?pp = <NEW-ELEMENT button 114>;
-!BODY.add.child:?pp;
-
-

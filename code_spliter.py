@@ -1,4 +1,4 @@
-import errors
+import MarkGoErrors
 
 
 def split(code: str) -> list:
@@ -12,7 +12,7 @@ def split(code: str) -> list:
         elif code[i] == '}':
             x -= 1
             if x < 0:
-                raise errors.MarkGoSyntaxError('}')
+                raise MarkGoErrors.MarkGoSyntaxError('}')
         elif code[i] == ';' and x == 0:
             lcode.append(l)
             l = ''

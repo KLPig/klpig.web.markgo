@@ -1,12 +1,23 @@
+import MarkGoErrors
 from modular import *
 
-file = open('target.mgtgt').read() + '.mgo'
+file = open('target.mgtgt').read().split('.')[0] + '.mgo'
 
 head = ''
 body = ''
 
 
-data = {}
+data: dict[str, str] = {}
+
+
+def find_val(name: str, cmd: str = None):
+    if name[0] == '?':
+        try:
+            return data[name[1:]]
+        except KeyError:
+            raise MarkGoErrors.MarkGoUndefinedError(name[1:], 'variable', cmd)
+    else:
+        return name.removesuffix('"').removeprefix('"')
 
 
 def run_ins(inst: list[Actions | Functions | VariablesSet | Nest]):
@@ -14,11 +25,7 @@ def run_ins(inst: list[Actions | Functions | VariablesSet | Nest]):
     for cmd in inst:
         if type(cmd) is Actions:
             f = cmd.det.split(':')
-            arg = f[1]
-            if arg[0] == '"':
-                arg = arg[1:].removesuffix('"')
-            elif arg[0] == '?':
-                arg = data[arg[1:]]
+            arg = find_val(f[1], cmd.cmd)
             if cmd.obj == 'HEAD':
                 if cmd.ins == 'set':
                     if f[0] == 'title':
@@ -36,17 +43,20 @@ def run_ins(inst: list[Actions | Functions | VariablesSet | Nest]):
             if cmd.func == 'CREATE':
                 data[cmd.arg] = ''
         elif type(cmd) is VariablesSet:
-            arg = cmd.val
+            arg = find_val(cmd.val, cmd.cmd)
             if arg[0] == '"':
                 arg = arg[1:].removesuffix('"')
             elif arg[0] == '?':
                 arg = data[arg[1:]][1:].removesuffix('"')
-            data[cmd.obj] = arg
+            if cmd.op == '=':
+                data[cmd.obj] = arg
+            elif cmd.op == '<':
+                data[cmd.obj] = data[cmd.obj].replace('</', f'{arg}</',  1)
         elif type(cmd) is Nest:
             if cmd.func == 'FOR':
                 if cmd.arg['type'] == 'iter':
-                    for i in range(int(cmd.arg['st']), int(cmd.arg['en'])):
-                        data[cmd.arg['in']] = int(i)
+                    for i in range(int(find_val(cmd.arg['st'])), int(find_val(cmd.arg['en']))):
+                        data[cmd.arg['in']] = str(i)
                         run_ins(cmd.code)
 
 
@@ -58,3 +68,11 @@ if __name__ == '__main__':
         f'<body>\n{body}\n</body>\n</html>'
     )
 
+
+def compile_ins():
+    ins = pickle.load(open(file, 'rb'))
+    run_ins(ins)
+    open(f'{file.split(".")[0]}.html', 'w').write(
+        f'<!DOCTYPE html>\n<html>\n<head>\n{head}\n</head>\n'
+        f'<body>\n{body}\n</body>\n</html>'
+    )

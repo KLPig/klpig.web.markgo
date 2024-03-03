@@ -1,45 +1,41 @@
 import time
-import os
 
-file = input('File to compile: ')
+import MarkGoErrors
+import pre_loader
+import modular
+import compiler
+import os
+import MarkGoErrors
+
+if open('./target.mgtgt').read() == '':
+    file = input('File to compile: ')
+else:
+    file = open('./target.mgtgt').read()
+
 file = file.split('.')[0]
 
-print()
+if not os.path.isfile(f'{file}.mg'):
+    raise MarkGoErrors.MarkGoLanguageError()
 
 print('Writing target file..')
-
 open('target.mgtgt', 'w').write(file)
-
 print('Done writing.')
-
-print()
 
 time.sleep(0.1)
 
 print('Pre-loading..')
-
-os.system('python pre_loader.py')
-
+pre_loader.load()
 print(f'Loading done, {file}.mgins was created.')
-
-print()
 
 time.sleep(0.3)
 
 print('Modularizing...')
-
-os.system('python modular.py')
-
+modular.mod()
 print(f'Modularization done, {file}.mgo was created.')
-
-print()
 
 time.sleep(0.3)
 
 print('Compiling..')
-
 time.sleep(1.5)
-
-os.system('python compiler.py')
-
+compiler.compile_ins()
 print(f'Compilation was done, please check for {file}.html.')
