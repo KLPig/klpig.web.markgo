@@ -1,2 +1,3 @@
-# klpig.web.markgo
-A language for calculates and markups
+# MarkGo
+
+A language for **mark** and **go**.
