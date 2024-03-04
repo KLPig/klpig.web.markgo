@@ -1,11 +1,12 @@
 import MarkGoErrors
 import code_spliter
+import os
 
 
-def load():
-    file = open('target.mgtgt').read() + '.mg'
+def load(dirname, filename):
+    file = os.path.join(dirname, filename)
 
-    code = open(file).read()
+    code = open(file + '.mg').read()
 
     if code.split('\n')[0] != 'LANGUAGE MARKGO':
         raise MarkGoErrors.MarkGoLanguageError()
@@ -46,4 +47,4 @@ def load():
 
     ans = '\n'.join(code_spliter.split(loaded_code))
 
-    open(f'{file.split(".")[0]}.mgins', 'w').write(ans)
+    open(file + '.mgins', 'w').write(ans)

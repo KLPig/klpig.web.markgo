@@ -1,7 +1,4 @@
-import MarkGoErrors
 from modular import *
-
-file = open('target.mgtgt').read().split('.')[0] + '.mgo'
 
 head = ''
 body = ''
@@ -44,13 +41,9 @@ def run_ins(inst: list[Actions | Functions | VariablesSet | Nest]):
                 data[cmd.arg] = ''
         elif type(cmd) is VariablesSet:
             arg = find_val(cmd.val, cmd.cmd)
-            if arg[0] == '"':
-                arg = arg[1:].removesuffix('"')
-            elif arg[0] == '?':
-                arg = data[arg[1:]][1:].removesuffix('"')
             if cmd.op == '=':
                 data[cmd.obj] = arg
-            elif cmd.op == '<':
+            elif cmd.op == '+':
                 data[cmd.obj] = data[cmd.obj].replace('</', f'{arg}</',  1)
         elif type(cmd) is Nest:
             if cmd.func == 'FOR':
@@ -69,10 +62,11 @@ if __name__ == '__main__':
     )
 
 
-def compile_ins():
-    ins = pickle.load(open(file, 'rb'))
+def compile_ins(dirname, filename):
+    file = os.path.join(dirname, filename)
+    ins = pickle.load(open(file + '.mgo', 'rb'))
     run_ins(ins)
-    open(f'{file.split(".")[0]}.html', 'w').write(
+    open(file + '.html', 'w').write(
         f'<!DOCTYPE html>\n<html>\n<head>\n{head}\n</head>\n'
         f'<body>\n{body}\n</body>\n</html>'
     )

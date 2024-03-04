@@ -1,6 +1,7 @@
 import MarkGoErrors
 import code_spliter
 import pickle
+import os
 
 
 class Instructions:
@@ -30,7 +31,7 @@ class VariablesSet(Instructions):
             self.obj = c[0]
             self.op = c[1]
             self.val = ' '.join(c[2:])
-            if self.op != '=' and self.op != '<':
+            if self.op != '=' and self.op != '+':
                 raise MarkGoErrors.MarkGoSyntaxError(c[1])
         except IndexError:
             raise MarkGoErrors.MarkGoArgumentNumberError(3, len(c))
@@ -93,14 +94,8 @@ def modularize(code: str) -> list[Instructions]:
     return cmds
 
 
-file = open('target.mgtgt').read().split('.')[0] + '.mgins'
-
-if __name__ == '__main__':
-    s = modularize(open(file).read())
-    pickle.dump(s, open(f'{file.split(".")[0]}.mgo', 'wb'))
-
-
-def mod():
-    s = modularize(open(file).read())
-    pickle.dump(s, open(f'{file.split(".")[0]}.mgo', 'wb'))
+def mod(dirname, filename):
+    file = os.path.join(dirname, filename)
+    s = modularize(open(file + '.mgins').read())
+    pickle.dump(s, open(file + '.mgo', 'wb'))
 
